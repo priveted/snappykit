@@ -1,4 +1,4 @@
-import { replaceAll, toCamelCase, toKebabCase } from './string';
+import { toCamelCase, toKebabCase } from './string';
 import type { DomNode, ValueElement, VisibleElement } from '@/types';
 
 /**
@@ -72,9 +72,7 @@ export function hasClass(element: HTMLElement | null, className: string): boolea
 export function addClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string'
-    ? className.split(' ')
-    : className;
+  const classes = typeof className === 'string' ? className.split(' ') : className;
 
   el.classList.add(...classes);
 }
@@ -87,9 +85,7 @@ export function addClass(el: HTMLElement, className: string | string[]) {
 export function removeClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string'
-    ? className.split(' ')
-    : className;
+  const classes = typeof className === 'string' ? className.split(' ') : className;
 
   el.classList.remove(...classes);
 }
@@ -102,11 +98,9 @@ export function removeClass(el: HTMLElement, className: string | string[]) {
 export function toggleClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string'
-    ? className.split(' ')
-    : className;
+  const classes = typeof className === 'string' ? className.split(' ') : className;
 
-  classes.forEach(cls => {
+  classes.forEach((cls) => {
     if (hasClass(el, cls)) {
       removeClass(el, cls);
     } else {
@@ -177,10 +171,7 @@ export function query<T extends Element = Element>(
  * @param context - DOM context to query within (default: document)
  * @returns Array of matching elements
  */
-export function queryList<T extends Element = Element>(
-  selector: string,
-  context: Element | Document = document
-): T[] {
+export function queryList<T extends Element = Element>(selector: string, context: Element | Document = document): T[] {
   const list: T[] = [];
 
   query<T>(selector, (el) => list.push(el), context);
@@ -258,10 +249,7 @@ export function toHtml(data: string | Node | Node[] | HTMLElement | HTMLElement[
  * @param child - Child node, array of nodes, or NodeList to append
  * @returns The parent element
  */
-export function append(
-  el: DomNode,
-  child: HTMLElement | Node | NodeList | Node[],
-): Element | HTMLElement | Node {
+export function append(el: DomNode, child: HTMLElement | Node | NodeList | Node[]): Element | HTMLElement | Node {
   if (child instanceof NodeList) child.forEach((item: Node) => append(el, item));
   else if (Array.isArray(child)) Array.from(child).forEach((item: Node) => append(el, item));
   else el.appendChild(child);
@@ -275,10 +263,7 @@ export function append(
  * @param child - Child node, array of nodes, or NodeList to prepend
  * @returns The parent element
  */
-export function prepend(
-  el: DomNode,
-  child: HTMLElement | Node | NodeList | Node[],
-): Element | HTMLElement | Node {
+export function prepend(el: DomNode, child: HTMLElement | Node | NodeList | Node[]): Element | HTMLElement | Node {
   if (child instanceof NodeList) {
     Array.from(child)
       .reverse()
@@ -298,10 +283,7 @@ export function prepend(
  * @param child - Node or nodes to insert
  * @returns The reference element
  */
-export function before(
-  el: DomNode,
-  child: HTMLElement | Node | NodeList | Node[],
-): Element | HTMLElement | Node {
+export function before(el: DomNode, child: HTMLElement | Node | NodeList | Node[]): Element | HTMLElement | Node {
   if (child instanceof NodeList) {
     Array.from(child).forEach((item: Node) => before(el, item));
   } else if (Array.isArray(child)) {
@@ -318,10 +300,7 @@ export function before(
  * @param child - Node or nodes to insert
  * @returns The reference element
  */
-export function after(
-  el: DomNode,
-  child: HTMLElement | Node | NodeList | Node[],
-): Element | HTMLElement | Node {
+export function after(el: DomNode, child: HTMLElement | Node | NodeList | Node[]): Element | HTMLElement | Node {
   if (child instanceof NodeList) {
     Array.from(child).forEach((item: Node) => after(el, item));
   } else if (Array.isArray(child)) {
@@ -395,10 +374,7 @@ export function closest(
  */
 export function val(el: ValueElement): string;
 export function val(el: ValueElement, value: string): ValueElement;
-export function val(
-  el: ValueElement,
-  value?: string,
-): string | ValueElement {
+export function val(el: ValueElement, value?: string): string | ValueElement {
   if (value !== undefined) {
     el.value = value;
     return el;
