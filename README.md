@@ -26,7 +26,7 @@ import {
   rebind, // Events
   formatBytes,
   toCamelCase, // String utilities
-  parserHtml,
+  parseHtml,
   escapeHtml, // Html
   // ...
 } from 'snappykit';
@@ -161,7 +161,7 @@ Lightweight key and value storage
 ```typescript
 import { createStore } from 'snappykit/store';
 
-const userStore = createStore({ name: 'Alice', age: 25 });
+const userStore = createStore<{ name: string; age: number }>({ name: 'Alice', age: 25 });
 
 userStore.get('name'); // "Alice"
 userStore.set('name', 'Bob');
