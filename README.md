@@ -159,7 +159,7 @@ Lightweight key and value storage
 ### Example:
 
 ```typescript
-import { createStore } from 'snappykit/store';
+import { createStore } from 'snappykit';
 
 const userStore = createStore<{ name: string; age: number }>({ name: 'Alice', age: 25 });
 
