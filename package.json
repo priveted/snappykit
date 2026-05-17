@@ -1,0 +1,47 @@
+{
+  "name": "snappykit",
+  "description": "A developer's kit containing tools and simple methods for working with DOM, events, and filters.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "Eduard Y",
+  "homepage": "https://priveted.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/priveted/snappykit"
+  },
+  "type": "module",
+  "main": "./dist/snappykit.mjs",
+  "module": "./dist/snappykit.mjs",
+  "types": "./dist/snappykit.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/snappykit.d.ts",
+      "import": "./dist/snappykit.mjs",
+      "require": "./dist/snappykit.umd.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --fix",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^25.8.0",
+    "eslint": "^10.4.0",
+    "globals": "^17.6.0",
+    "prettier": "3.8.3",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.59.3",
+    "vite": "^8.0.12",
+    "vite-plugin-dts": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
