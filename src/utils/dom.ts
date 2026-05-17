@@ -1,5 +1,5 @@
 import { replaceAll, toCamelCase, toKebabCase } from './string';
-import type { VisibleElement } from '@/types';
+import type { DomNode, ValueElement, VisibleElement } from '@/types';
 
 /**
  * Gets or sets CSS styles on an element
@@ -59,59 +59,60 @@ export function css(
  * @param className - CSS class name to check
  * @returns True if element has the class, false otherwise
  */
-export function hasClass(element: HTMLElement | EventTarget | null, className: string): boolean {
-  if (!element || !(element instanceof HTMLElement)) {
-    return false;
-  }
-
-  return !!element.className.match(new RegExp('(\\s|^)' + className + '(\\s|$)'));
+export function hasClass(element: HTMLElement | null, className: string): boolean {
+  if (!element) return false;
+  return element.classList.contains(className);
 }
 
 /**
- * Sets or removes a CSS class on an element
+ * Adds one or more CSS classes to an element
  * @param el - Target DOM element
- * @param className - CSS class name
- * @param active - True to add, false to remove (default: true)
+ * @param className - CSS class name(s) as string or array of strings
  */
-export function setClass(el: HTMLElement, className: string, active: boolean = true) {
-  let name = el?.className || '';
+export function addClass(el: HTMLElement, className: string | string[]) {
+  if (!el) return;
 
-  if (el) {
-    if (active) {
-      if (!hasClass(el, className)) name += ' ' + className;
-    } else if (hasClass(el, className)) {
-      name = replaceAll(className, '', name);
+  const classes = typeof className === 'string'
+    ? className.split(' ')
+    : className;
+
+  el.classList.add(...classes);
+}
+
+/**
+ * Removes one or more CSS classes from an element
+ * @param el - Target DOM element
+ * @param className - CSS class name(s) as string or array of strings
+ */
+export function removeClass(el: HTMLElement, className: string | string[]) {
+  if (!el) return;
+
+  const classes = typeof className === 'string'
+    ? className.split(' ')
+    : className;
+
+  el.classList.remove(...classes);
+}
+
+/**
+ * Toggles one or more CSS classes on an element
+ * @param el - Target DOM element
+ * @param className - CSS class name(s) as string or array of strings
+ */
+export function toggleClass(el: HTMLElement, className: string | string[]) {
+  if (!el) return;
+
+  const classes = typeof className === 'string'
+    ? className.split(' ')
+    : className;
+
+  classes.forEach(cls => {
+    if (hasClass(el, cls)) {
+      removeClass(el, cls);
+    } else {
+      addClass(el, cls);
     }
-
-    el.className = name.trim();
-  }
-}
-
-/**
- * Adds a CSS class to an element
- * @param el - Target DOM element
- * @param className - CSS class name
- */
-export function addClass(el: HTMLElement, className: string) {
-  setClass(el, className);
-}
-
-/**
- * Removes a CSS class from an element
- * @param el - Target DOM element
- * @param className - CSS class name
- */
-export function removeClass(el: HTMLElement, className: string) {
-  setClass(el, className, false);
-}
-
-/**
- * Toggles a CSS class on an element
- * @param el - Target DOM element
- * @param className - CSS class name
- */
-export function toggleClass(el: HTMLElement, className: string) {
-  setClass(el, className, !hasClass(el, className));
+  });
 }
 
 /**
@@ -142,7 +143,8 @@ export function makeText(content: string = ''): Text {
  * @param element - The element to remove
  */
 export function remove(element: Element | HTMLElement): void {
-  element.parentNode?.removeChild(element);
+  if (!element?.parentNode) return;
+  element.parentNode.removeChild(element);
 }
 
 /**
@@ -150,20 +152,20 @@ export function remove(element: Element | HTMLElement): void {
  * @param selector - CSS selector
  * @param callback - Function called for each matching element
  * @param context - DOM context to query within (default: document)
- * @returns False if no elements found, otherwise number of elements
+ * @returns Number of elements
  */
-export function query(
+export function query<T extends Element = Element>(
   selector: string,
-  callback: CallableFunction,
-  context: HTMLElement | Document | undefined | null = document,
-) {
+  callback: (el: T, index: number) => void,
+  context: Element | Document = document,
+): number {
   context = context ? context : document;
   const elements = context.querySelectorAll(selector);
 
-  if (!elements.length) return false;
+  if (!elements.length) return 0;
 
   elements.forEach((el, i) => {
-    if (callback) callback(el, i);
+    if (callback) callback(el as T, i);
   });
 
   return elements.length;
@@ -175,10 +177,13 @@ export function query(
  * @param context - DOM context to query within (default: document)
  * @returns Array of matching elements
  */
-export function queryList(selector: string, context: HTMLElement | Document | undefined = document) {
-  const list: HTMLElement[] = [];
+export function queryList<T extends Element = Element>(
+  selector: string,
+  context: Element | Document = document
+): T[] {
+  const list: T[] = [];
 
-  query(selector, (el: HTMLElement) => list.push(el), context);
+  query<T>(selector, (el) => list.push(el), context);
 
   return list;
 }
@@ -189,7 +194,7 @@ export function queryList(selector: string, context: HTMLElement | Document | un
  * @param context - DOM context to query within (default: document)
  * @returns Number of matching elements
  */
-export function queryLength(selector: string, context: HTMLElement | Document | undefined = document): number {
+export function queryLength(selector: string, context: Element | Document = document): number {
   let length = 0;
 
   query(selector, () => length++, context);
@@ -254,7 +259,7 @@ export function toHtml(data: string | Node | Node[] | HTMLElement | HTMLElement[
  * @returns The parent element
  */
 export function append(
-  el: Node | Element | HTMLElement,
+  el: DomNode,
   child: HTMLElement | Node | NodeList | Node[],
 ): Element | HTMLElement | Node {
   if (child instanceof NodeList) child.forEach((item: Node) => append(el, item));
@@ -271,7 +276,7 @@ export function append(
  * @returns The parent element
  */
 export function prepend(
-  el: Node | Element | HTMLElement,
+  el: DomNode,
   child: HTMLElement | Node | NodeList | Node[],
 ): Element | HTMLElement | Node {
   if (child instanceof NodeList) {
@@ -294,7 +299,7 @@ export function prepend(
  * @returns The reference element
  */
 export function before(
-  el: Node | Element | HTMLElement,
+  el: DomNode,
   child: HTMLElement | Node | NodeList | Node[],
 ): Element | HTMLElement | Node {
   if (child instanceof NodeList) {
@@ -314,7 +319,7 @@ export function before(
  * @returns The reference element
  */
 export function after(
-  el: Node | Element | HTMLElement,
+  el: DomNode,
   child: HTMLElement | Node | NodeList | Node[],
 ): Element | HTMLElement | Node {
   if (child instanceof NodeList) {
@@ -366,17 +371,17 @@ export function removeAttr(el: Element | HTMLElement, attrName: string | string[
  * @returns The parent if found, false otherwise
  */
 export function closest(
-  element: Node | HTMLElement | EventTarget | HTMLTextAreaElement | null,
-  children: Node | HTMLElement | EventTarget | HTMLTextAreaElement | null,
-) {
-  let el = element as HTMLElement;
+  element: HTMLElement | EventTarget | null,
+  children: HTMLElement | EventTarget | null,
+): Element | false {
+  if (!element || !children) return false;
+  if (!(element instanceof Node) || !(children instanceof Node)) return false;
 
-  if (!el?.parentElement) return false;
+  let el: Node | null = element;
 
-  while (el.parentElement) {
-    if (el === children) return el;
-
-    el = el.parentElement;
+  while (el) {
+    if (el === children) return el as Element;
+    el = el.parentElement || el.parentNode;
   }
 
   return false;
@@ -388,16 +393,18 @@ export function closest(
  * @param value - Value to set (optional)
  * @returns Element value when getting, undefined when setting
  */
+export function val(el: ValueElement): string;
+export function val(el: ValueElement, value: string): ValueElement;
 export function val(
-  el: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement,
+  el: ValueElement,
   value?: string,
-): string | undefined {
+): string | ValueElement {
   if (value !== undefined) {
     el.value = value;
-    return;
+    return el;
   }
 
-  return el.value;
+  return el.value || '';
 }
 
 /**
@@ -406,7 +413,7 @@ export function val(
  * @param text - Text content
  * @returns The parent element
  */
-export function appendText(el: Node | Element | HTMLElement, text: string): Node | Element | HTMLElement {
+export function appendText(el: DomNode, text: string): DomNode {
   return append(el, document.createTextNode(text));
 }
 
@@ -469,7 +476,7 @@ export function replaceWithChildren(element: HTMLElement): void {
  * @param value - Data attribute value (if provided, sets the attribute)
  * @returns Data attribute value when getting, undefined when setting
  */
-export function data(el: HTMLElement, key: string | Record<string, string>, value?: string) {
+export function data(el: HTMLElement, key: string | Record<string, string>, value?: string): string | undefined | void {
   if (typeof key === 'object' && key !== null) {
     Object.entries(key).forEach(([dataKey, dataValue]) => {
       data(el, dataKey, dataValue);
@@ -477,8 +484,12 @@ export function data(el: HTMLElement, key: string | Record<string, string>, valu
     return;
   }
 
-  if (value !== undefined) el.dataset[key] = value;
-  else return el.dataset[key];
+  if (value !== undefined) {
+    el.dataset[key] = value;
+    return;
+  }
+
+  return el.dataset[key];
 }
 
 /**
@@ -566,8 +577,8 @@ export function outerSize(el: HTMLElement): { width: number; height: number } {
   const styles = window.getComputedStyle(el);
 
   return {
-    width: el.offsetWidth + parseInt(styles.marginLeft) + parseInt(styles.marginRight),
-    height: el.offsetHeight + parseInt(styles.marginTop) + parseInt(styles.marginBottom),
+    width: el.offsetWidth + parseInt(styles.marginLeft, 10) + parseInt(styles.marginRight, 10),
+    height: el.offsetHeight + parseInt(styles.marginTop, 10) + parseInt(styles.marginBottom, 10),
   };
 }
 

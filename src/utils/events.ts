@@ -9,20 +9,20 @@ import { eventStore } from '@/store';
  * @param options - AddEventListener options or useCapture flag
  */
 export function on<T extends Event>(
-  element: EventTarget,
+  element: HTMLElement | Document | Window,
   eventName: string,
   handler: EventHandler<T>,
   options?: AddEventListenerOptions | boolean,
 ): void;
 
 export function on(
-  element: EventTarget,
+  element: HTMLElement | Document | Window,
   eventName: string,
   handler: EventHandler,
   options?: AddEventListenerOptions | boolean,
 ): void {
-  const wrappedHandler = (event: BaseEvent) => {
-    event.delegateTarget = element;
+  const wrappedHandler = (event: Event) => {
+    event.delegateTarget = element as HTMLElement;
     handler(event);
   };
 
@@ -52,7 +52,7 @@ export function on(
  * @param eventName - Event name with optional dot-separated ID. If ID is omitted, removes all listeners for that event type
  * @param options - AddEventListener options or useCapture flag that matches the original registration
  */
-export function off(element: EventTarget, eventName: string, options?: AddEventListenerOptions | boolean): void {
+export function off(element: HTMLElement | Document | Window, eventName: string, options?: AddEventListenerOptions | boolean): void {
   const [eventType, id] = eventName.split('.'),
     handlers = eventStore.get(element);
 
@@ -87,14 +87,14 @@ export function off(element: EventTarget, eventName: string, options?: AddEventL
  * @param options - AddEventListener options or useCapture flag
  */
 export function rebind<T extends Event>(
-  element: EventTarget,
+  element: HTMLElement | Document | Window,
   eventName: string,
   handler: EventHandler<T>,
   options?: AddEventListenerOptions | boolean,
 ): void;
 
 export function rebind(
-  element: EventTarget,
+  element: HTMLElement | Document | Window,
   eventName: string,
   handler: EventHandler,
   options?: AddEventListenerOptions | boolean,
