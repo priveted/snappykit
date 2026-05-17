@@ -1,6 +1,6 @@
 {
   "name": "snappykit",
-  "description": "A developer's kit containing tools and simple methods for working with DOM, events, and filters.",
+  "description": "A lightweight, zero-dependency TypeScript utility kit for DOM manipulation, event handling, string formatting, HTML parsing, and state management.",
   "version": "1.0.0",
   "license": "MIT",
   "author": "Eduard Y",
@@ -30,6 +30,25 @@
     "lint": "eslint . --fix",
     "format": "prettier --write ."
   },
+  "keywords": [
+    "dom",
+    "events",
+    "string",
+    "html",
+    "utilities",
+    "helpers",
+    "typescript",
+    "lightweight",
+    "zero-dependency",
+    "browser",
+    "manipulation",
+    "formatting",
+    "parser",
+    "store",
+    "css",
+    "classes",
+    "toolkit"
+  ],
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^25.8.0",
