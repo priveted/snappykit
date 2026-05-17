@@ -13,7 +13,7 @@ export type EventHandler<T extends Event = Event> = (evt: T) => void;
 export type BaseEvent = Event & { delegateTarget: EventTarget };
 
 declare global {
-    interface Event {
-        delegateTarget: HTMLElement;
-    }
+  interface Event {
+    delegateTarget: HTMLElement;
+  }
 }

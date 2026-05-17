@@ -1,4 +1,4 @@
-import type { BaseEvent, EventHandler } from '@/types';
+import type { EventHandler } from '@/types';
 import { eventStore } from '@/store';
 
 /**
@@ -52,7 +52,11 @@ export function on(
  * @param eventName - Event name with optional dot-separated ID. If ID is omitted, removes all listeners for that event type
  * @param options - AddEventListener options or useCapture flag that matches the original registration
  */
-export function off(element: HTMLElement | Document | Window, eventName: string, options?: AddEventListenerOptions | boolean): void {
+export function off(
+  element: HTMLElement | Document | Window,
+  eventName: string,
+  options?: AddEventListenerOptions | boolean,
+): void {
   const [eventType, id] = eventName.split('.'),
     handlers = eventStore.get(element);
 
