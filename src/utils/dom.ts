@@ -1,13 +1,6 @@
-import { toCamelCase, toKebabCase } from './string';
-import type { DomNode, ValueElement, VisibleElement } from '@/types';
+import { toCamelCase, toKebabCase } from './primitives';
+import type { DomChildNode, DomNode, ValueElement, VisibleElement } from '@/types';
 
-/**
- * Gets or sets CSS styles on an element
- * @param element - Target DOM element
- * @param prop - CSS property name or object with multiple properties
- * @param value - CSS value (required if prop is string)
- * @returns Computed style value when getting, empty string when setting
- */
 /**
  * Gets or sets CSS styles on an element
  * @param element - Target DOM element
@@ -31,22 +24,24 @@ export function css(
       css(element, property, val);
     }
   } else {
-    const camelCaseProp = toCamelCase(prop);
+    const kebabProp = toKebabCase(prop);
+    const camelProp = toCamelCase(prop);
 
-    if (value !== undefined && value !== null) {
-      if (value === '' || value === null) {
-        element.style.removeProperty(toKebabCase(prop));
-      } else {
-        if (camelCaseProp in element.style) {
-          const styleKey = camelCaseProp as keyof CSSStyleDeclaration;
-
-          if (typeof element.style[styleKey] === 'string' || typeof element.style[styleKey] === 'undefined') {
-            element.style.setProperty(toKebabCase(prop), addPxSuffix(value));
-          }
-        }
+    if (value === '' || value === null) {
+      element.style.removeProperty(kebabProp);
+      element.style.setProperty(kebabProp, '');
+    } else if (value !== undefined) {
+      if (camelProp in element.style) {
+        element.style.setProperty(kebabProp, addPxSuffix(value));
       }
     } else {
-      result = window.getComputedStyle(element, '').getPropertyValue(toKebabCase(prop)) || '';
+      const inlineValue = element.style.getPropertyValue(kebabProp);
+
+      if (inlineValue) {
+        result = inlineValue;
+      } else {
+        result = window.getComputedStyle(element, '').getPropertyValue(kebabProp) || '';
+      }
     }
   }
 
@@ -115,11 +110,12 @@ export function toggleClass(el: HTMLElement, className: string | string[]) {
  * @param callback - Optional callback function called with the created element
  * @returns The created element
  */
-export function make(name: string, callback?: CallableFunction): HTMLElement {
-  const el: HTMLElement = document.createElement(name);
-
+export function make<T extends HTMLElement = HTMLElement>(
+  name: string,
+  callback?: (el: T) => void
+): T {
+  const el = document.createElement(name) as T;
   if (callback) callback(el);
-
   return el;
 }
 
@@ -133,12 +129,19 @@ export function makeText(content: string = ''): Text {
 }
 
 /**
- * Removes an element from the DOM
- * @param element - The element to remove
+ * Removes an element(s) from the DOM
+ * @param element - Element, array of elements, or NodeList to remove
  */
-export function remove(element: Element | HTMLElement): void {
-  if (!element?.parentNode) return;
-  element.parentNode.removeChild(element);
+export function remove(element: Element | Element[] | NodeListOf<Element>): void {
+  if (!element) return;
+
+  if (element instanceof NodeList) {
+    Array.from(element).forEach((el) => remove(el));
+  } else if (Array.isArray(element)) {
+    element.slice().forEach((el) => remove(el));
+  } else if (element?.parentNode) {
+    element.parentNode.removeChild(element);
+  }
 }
 
 /**
@@ -249,7 +252,10 @@ export function toHtml(data: string | Node | Node[] | HTMLElement | HTMLElement[
  * @param child - Child node, array of nodes, or NodeList to append
  * @returns The parent element
  */
-export function append(el: DomNode, child: HTMLElement | Node | NodeList | Node[]): Element | HTMLElement | Node {
+export function append<T extends DomNode = DomNode>(
+  el: T,
+  child: DomChildNode
+): T {
   if (child instanceof NodeList) child.forEach((item: Node) => append(el, item));
   else if (Array.isArray(child)) Array.from(child).forEach((item: Node) => append(el, item));
   else el.appendChild(child);
@@ -263,7 +269,10 @@ export function append(el: DomNode, child: HTMLElement | Node | NodeList | Node[
  * @param child - Child node, array of nodes, or NodeList to prepend
  * @returns The parent element
  */
-export function prepend(el: DomNode, child: HTMLElement | Node | NodeList | Node[]): Element | HTMLElement | Node {
+export function prepend<T extends DomNode = DomNode>(
+  el: T,
+  child: DomChildNode
+): T {
   if (child instanceof NodeList) {
     Array.from(child)
       .reverse()
@@ -278,16 +287,24 @@ export function prepend(el: DomNode, child: HTMLElement | Node | NodeList | Node
 }
 
 /**
- * Inserts a node or nodes before an element
+ * Inserts nodes before an element, or retrieves the previous sibling element
+ * if no nodes are provided.
+ * 
  * @param el - Reference element
- * @param child - Node or nodes to insert
- * @returns The reference element
+ * @param child - Node or nodes to insert (optional)
+ * @returns The reference element when inserting, or the previous sibling element when reading
  */
-export function before(el: DomNode, child: HTMLElement | Node | NodeList | Node[]): Element | HTMLElement | Node {
+export function before<T extends Element>(el: T): Element | null;
+export function before<T extends Element>(el: T, child: DomChildNode): T;
+export function before<T extends Element>(el: T, child?: DomChildNode): T | Element | null {
+  if (child === undefined) {
+    return el.previousElementSibling;
+  }
+
   if (child instanceof NodeList) {
-    Array.from(child).forEach((item: Node) => before(el, item));
+    Array.from(child).forEach((item) => before(el, item));
   } else if (Array.isArray(child)) {
-    Array.from(child).forEach((item: Node) => before(el, item));
+    child.forEach((item) => before(el, item));
   } else {
     el.parentNode?.insertBefore(child, el);
   }
@@ -295,16 +312,24 @@ export function before(el: DomNode, child: HTMLElement | Node | NodeList | Node[
 }
 
 /**
- * Inserts a node or nodes after an element
+ * Inserts nodes after an element, or retrieves the next sibling element
+ * if no nodes are provided.
+ * 
  * @param el - Reference element
- * @param child - Node or nodes to insert
- * @returns The reference element
+ * @param child - Node or nodes to insert (optional)
+ * @returns The reference element when inserting, or the next sibling element when reading
  */
-export function after(el: DomNode, child: HTMLElement | Node | NodeList | Node[]): Element | HTMLElement | Node {
+export function after<T extends Element>(el: T): Element | null;
+export function after<T extends Element>(el: T, child: DomChildNode): T;
+export function after<T extends Element>(el: T, child?: DomChildNode): T | Element | null {
+  if (child === undefined) {
+    return el.nextElementSibling;
+  }
+
   if (child instanceof NodeList) {
-    Array.from(child).forEach((item: Node) => after(el, item));
+    Array.from(child).forEach((item) => after(el, item));
   } else if (Array.isArray(child)) {
-    Array.from(child).forEach((item: Node) => after(el, item));
+    child.forEach((item) => after(el, item));
   } else {
     el.parentNode?.insertBefore(child, el.nextSibling);
   }
@@ -345,21 +370,21 @@ export function removeAttr(el: Element | HTMLElement, attrName: string | string[
 
 /**
  * Checks if an element is a child of another element
- * @param element - Child element to check
- * @param children - Potential parent element
+ * @param child - Child element to check
+ * @param parent - Potential parent element
  * @returns The parent if found, false otherwise
  */
-export function closest(
-  element: HTMLElement | EventTarget | null,
-  children: HTMLElement | EventTarget | null,
-): Element | false {
-  if (!element || !children) return false;
-  if (!(element instanceof Node) || !(children instanceof Node)) return false;
+export function closest<C extends Node = HTMLElement, P extends Node = HTMLElement>(
+  child: C | EventTarget | null,
+  parent: P | EventTarget | null,
+): P | false {
+  if (!child || !parent) return false;
+  if (!(child instanceof Node) || !(parent instanceof Node)) return false;
 
-  let el: Node | null = element;
+  let el: Node | null = child;
 
   while (el) {
-    if (el === children) return el as Element;
+    if (el === parent) return el as P;
     el = el.parentElement || el.parentNode;
   }
 
@@ -563,11 +588,10 @@ export function outerSize(el: HTMLElement): { width: number; height: number } {
  * @param el - Target element
  * @returns The emptied element
  */
-export function empty(el: HTMLElement): HTMLElement {
+export function empty<T extends HTMLElement = HTMLElement>(el: T): T {
   while (el.firstChild) {
     el.removeChild(el.firstChild);
   }
-
   return el;
 }
 

@@ -1,0 +1,516 @@
+:root {
+  --text: #9ca3af;
+  --text-h: #f3f4f6;
+  --bg: #16171d;
+  --border: #2e303a;
+  --code-bg: #1f2028;
+  --accent: #c084fc;
+  --accent-bg: rgba(192, 132, 252, 0.15);
+  --accent-border: rgba(192, 132, 252, 0.5);
+  --social-bg: rgba(47, 48, 58, 0.5);
+  --shadow: rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+  font: 18px/145% var(--sans);
+  letter-spacing: 0.18px;
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    font-size: 16px;
+  }
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#app {
+  max-width: 1024px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* ============================================================
+   SNP Test Suite - Stats
+   ============================================================ */
+.snp-stats {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0 32px;
+}
+
+.snp-stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+}
+
+.snp-stat-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.snp-stat-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.snp-stat-label {
+  font-size: 14px;
+  color: var(--text);
+}
+
+.snp-stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-h);
+  font-family: var(--mono);
+}
+
+.snp-stat--passed .snp-stat-value {
+  color: #4ade80;
+}
+
+.snp-stat--failed .snp-stat-value {
+  color: #f87171;
+}
+
+/* ============================================================
+   SNP Test Suite - Sections & Cases
+   ============================================================ */
+.snp-section {
+  margin-bottom: 32px;
+  padding: 20px;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.snp-section h2 {
+  color: var(--accent);
+  margin: 0 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--heading);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+}
+
+.snp-case {
+  padding: 10px 14px;
+  margin-bottom: 6px;
+  border-radius: 8px;
+  border-left: 3px solid;
+  background: rgba(0, 0, 0, 0.2);
+  transition: background 0.2s;
+}
+
+.snp-case:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.snp-case--passed {
+  border-left-color: #4ade80;
+}
+
+.snp-case--failed {
+  border-left-color: #f87171;
+}
+
+.snp-case__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.snp-case__icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.snp-case__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.snp-case__message {
+  font-size: 14px;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.snp-case__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 11px;
+  color: var(--text);
+  flex-shrink: 0;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.snp-case__toggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--accent-border);
+}
+
+.snp-case__toggle--expanded {
+  border-color: var(--accent-border);
+  color: var(--accent);
+}
+
+.snp-case__toggle-icon {
+  display: flex;
+  align-items: center;
+}
+
+.snp-case__toggle-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+.snp-case__toggle-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.snp-case__toggle-chevron {
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.snp-case__toggle-chevron svg {
+  width: 10px;
+  height: 10px;
+}
+
+.snp-case__toggle--expanded .snp-case__toggle-chevron {
+  transform: rotate(90deg);
+}
+
+.snp-case__code {
+  margin-top: 8px;
+  animation: snp-fadeInUp 0.2s ease;
+}
+
+/* ============================================================
+   SNP Test Suite - Code Blocks
+   ============================================================ */
+.snp-code-blocks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .snp-code-blocks {
+    grid-template-columns: 1fr;
+  }
+}
+
+.snp-code-block {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.snp-code-block__label {
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+  background: rgba(192, 132, 252, 0.1);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+}
+
+.snp-code-block pre {
+  margin: 0;
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-h);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.snp-code-block code {
+  font-family: var(--mono);
+}
+
+/* ============================================================
+   SNP Demo Panel
+   ============================================================ */
+.snp-demo {
+  margin: 32px 0;
+  padding: 24px;
+  background: var(--code-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+.snp-demo h2 {
+  color: var(--accent);
+  margin: 0 0 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--accent-border);
+  font-family: var(--heading);
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 118%;
+  letter-spacing: -0.24px;
+}
+
+.snp-demo__group {
+  margin-bottom: 28px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  animation: snp-fadeInUp 0.3s ease forwards;
+}
+
+.snp-demo__group h3 {
+  font-family: var(--heading);
+  color: var(--text-h);
+  font-size: 18px;
+  margin: 0 0 16px;
+  font-weight: 500;
+}
+
+.snp-demo__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.snp-demo__input-row {
+  margin-bottom: 12px;
+}
+
+.snp-demo__input-row input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-h);
+  font-size: 14px;
+  font-family: var(--mono);
+  transition: border-color 0.2s;
+}
+
+.snp-demo__input-row input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.snp-demo__group button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--sans);
+  white-space: nowrap;
+}
+
+.snp-demo__group button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.snp-demo__group button:hover {
+  background: var(--accent);
+  color: var(--bg);
+  transform: translateY(-1px);
+}
+
+.snp-demo__group button:active {
+  transform: translateY(0);
+}
+
+.snp-demo__box {
+  padding: 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-h);
+  min-width: 150px;
+  text-align: center;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.snp-demo__display {
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-h);
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.snp-demo__container {
+  padding: 12px;
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  min-height: 60px;
+  margin-bottom: 12px;
+}
+
+.snp-demo__item {
+  padding: 10px 14px;
+  margin: 4px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.snp-demo__item:hover {
+  transform: translateX(4px);
+}
+
+.snp-demo__item--base {
+  background: var(--accent-bg);
+}
+
+.snp-demo__output {
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 13px;
+  min-height: 40px;
+  word-break: break-all;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.snp-demo__output svg {
+  width: 14px;
+  height: 14px;
+}
+
+.snp-demo__code {
+  margin-top: 12px;
+}
+
+/* Highlighted element for attr demo */
+#demo-css-box.snp-highlighted {
+  background: var(--accent-bg) !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 20px rgba(192, 132, 252, 0.3);
+  opacity: 0.5;
+}
+
+/* Input styling for val demo */
+#demo-input {
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-h);
+  font-size: 14px;
+  width: 250px;
+  transition: border-color 0.2s;
+}
+
+#demo-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* ============================================================
+   SVG alignment fixes
+   ============================================================ */
+.snp-demo__output svg,
+.snp-case__icon svg,
+.snp-stat-icon svg,
+.snp-demo__group button svg {
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   Animations
+   ============================================================ */
+@keyframes snp-fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes snp-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

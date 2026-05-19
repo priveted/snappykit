@@ -15,3 +15,6 @@ export type ValueElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaEl
  * Union of Node, Element, and HTMLElement for broad compatibility
  */
 export type DomNode = Node | Element | HTMLElement;
+
+/** Allowed types for nodes to insert into the DOM */
+export type DomChildNode = Node | Node[] | NodeList;
