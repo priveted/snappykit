@@ -56,7 +56,7 @@ export function css(
  */
 export function hasClass(element: HTMLElement | null, className: string): boolean {
   if (!element) return false;
-  return element.classList.contains(className);
+  return element.classList.contains(className.trim());
 }
 
 /**
@@ -67,7 +67,11 @@ export function hasClass(element: HTMLElement | null, className: string): boolea
 export function addClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string' ? className.split(' ') : className;
+  const classes = typeof className === 'string'
+    ? className.split(' ').filter(Boolean)
+    : className.filter(Boolean);
+
+  if (classes.length === 0) return;
 
   el.classList.add(...classes);
 }
@@ -80,7 +84,11 @@ export function addClass(el: HTMLElement, className: string | string[]) {
 export function removeClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string' ? className.split(' ') : className;
+  const classes = typeof className === 'string'
+    ? className.split(' ').filter(Boolean)
+    : className.filter(Boolean);
+
+  if (classes.length === 0) return;
 
   el.classList.remove(...classes);
 }
@@ -93,13 +101,15 @@ export function removeClass(el: HTMLElement, className: string | string[]) {
 export function toggleClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string' ? className.split(' ') : className;
+  const classes = typeof className === 'string'
+    ? className.split(' ').filter(Boolean)
+    : className.filter(Boolean);
 
   classes.forEach((cls) => {
     if (hasClass(el, cls)) {
-      removeClass(el, cls);
+      el.classList.remove(cls);
     } else {
-      addClass(el, cls);
+      el.classList.add(cls);
     }
   });
 }
