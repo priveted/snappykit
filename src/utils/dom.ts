@@ -68,8 +68,8 @@ export function addClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
   const classes = typeof className === 'string'
-    ? className.split(' ').filter(Boolean)
-    : className.filter(Boolean);
+    ? className.split(' ').filter(cls => cls !== '')
+    : className;
 
   if (classes.length === 0) return;
 
@@ -85,8 +85,8 @@ export function removeClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
   const classes = typeof className === 'string'
-    ? className.split(' ').filter(Boolean)
-    : className.filter(Boolean);
+    ? className.split(' ').filter(cls => cls !== '')
+    : className;
 
   if (classes.length === 0) return;
 
@@ -102,14 +102,16 @@ export function toggleClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
   const classes = typeof className === 'string'
-    ? className.split(' ').filter(Boolean)
-    : className.filter(Boolean);
+    ? className.split(' ').filter(cls => cls !== '')
+    : className;
 
   classes.forEach((cls) => {
+    if (cls === '') return; // Пропускаем пустые классы
+
     if (hasClass(el, cls)) {
-      el.classList.remove(cls);
+      removeClass(el, cls);
     } else {
-      el.classList.add(cls);
+      addClass(el, cls);
     }
   });
 }

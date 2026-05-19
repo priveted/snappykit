@@ -507,7 +507,7 @@ function initDemoHandlers(): void {
   });
 
   on(document.getElementById('demo-toggleclass-btn')!, 'click', () => {
-    toggleClass(cssBox as HTMLElement, 'snp-highlighted  ');
+    toggleClass(cssBox as HTMLElement, 'snp-highlighted  __empty___    ');
     const has = hasClass(cssBox as HTMLElement, 'snp-highlighted');
     html(cssOutput as HTMLElement, `toggleClass('snp-highlighted'): class <strong>${has ? 'added' : 'removed'}</strong>`);
     html(cssCode as HTMLElement, createDemoCodeBlock(
