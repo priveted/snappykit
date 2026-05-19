@@ -106,7 +106,7 @@ export function toggleClass(el: HTMLElement, className: string | string[]) {
     : className;
 
   classes.forEach((cls) => {
-    if (cls === '') return; // Пропускаем пустые классы
+    if (cls === '') return;
 
     if (hasClass(el, cls)) {
       removeClass(el, cls);
