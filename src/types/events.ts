@@ -10,8 +10,6 @@ export type EventHandler<T extends Event = Event> = (evt: T) => void;
  * Adds the element that the delegated handler was bound to
  * @property delegateTarget - The element that the event handler is attached to
  */
-export type BaseEvent = Event;
-
 declare global {
   interface Event {
     delegateTarget: HTMLElement;
