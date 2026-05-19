@@ -148,41 +148,110 @@ export function reverse(string: string): string {
  * Converts bytes to a human readable string with automatic browser locale detection
  * @param bytes - The number of bytes to format
  * @param decimals - Number of decimal places (default: 2)
+ * @param forcedLocale - Force specific locale (e.g., 'ru', 'en', 'fr'). If not provided, uses browser's locale
  * @returns Formatted string with appropriate unit
  */
-export function formatBytes(bytes: number, decimals: number = 2): string {
-  if (bytes === 0) {
-    return new Intl.NumberFormat(navigator.language).format(0) + ' B';
-  }
-
+export function formatBytes(
+  bytes: number,
+  decimals: number = 2,
+  forcedLocale?: string
+): string {
   const k = 1024;
-  const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+  // Base unit arrays
+  const UNITS_DEFAULT = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const UNITS_SLAVIC = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ', 'ПБ', 'ЭБ', 'ЗБ', 'ЙБ'];
+  const UNITS_SLAVIC_E = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ', 'ПБ', 'ЕБ', 'ЗБ', 'ЙБ'];
+  const UNITS_FRENCH = ['o', 'Ko', 'Mo', 'Go', 'To', 'Po', 'Eo', 'Zo', 'Yo'];
+  const UNITS_ARABIC = ['ب', 'ك ب', 'م ب', 'ج ب', 'ت ب', 'ب ب', 'ا ب', 'ز ب', 'ي ب'];
+  const UNITS_HINDI = ['बाइट', 'कीबी', 'मीबी', 'गीबी', 'तीबी', 'पीबी', 'ईबी', 'जीबी', 'यीबी'];
+  const UNITS_BENGALI = ['বাইট', 'কেবি', 'এমবি', 'জিবি', 'টিবি', 'পিবি', 'ইবি', 'জেডবি', 'ওয়াইবি'];
+  const UNITS_TAMIL = ['பைட்', 'கேபி', 'எம்பி', 'ஜிபி', 'டிபி', 'பிபி', 'ஈபி', 'ஜெட்பி', 'ஒய்பி'];
+  const UNITS_MARATHI = ['बाइट', 'केबी', 'एमबी', 'जीबी', 'टीबी', 'पीबी', 'ईबी', 'झेडबी', 'वायबी'];
+  const UNITS_CHINESE = ['字节', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const UNITS_MACEDONIAN = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ', 'ПБ', 'ЕБ', 'ЗБ', 'ЈБ'];
 
   const unitTranslations: Record<string, string[]> = {
-    ru: ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ', 'ПБ', 'ЭБ', 'ЗБ', 'ЙБ'],
-    uk: ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ', 'ПБ', 'ЕБ', 'ЗБ', 'ЙБ'],
-    de: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-    fr: ['o', 'Ko', 'Mo', 'Go', 'To', 'Po', 'Eo', 'Zo', 'Yo'],
-    es: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-    it: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-    pl: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-    zh: ['字节', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-    ja: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-    ko: ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
-    ar: ['ب', 'ك ب', 'م ب', 'ج ب', 'ت ب', 'ب ب', 'ا ب', 'ز ب', 'ي ب'],
-    hi: ['बाइट', 'कीबी', 'मीबी', 'गीबी', 'तीबी', 'पीबी', 'ईबी', 'जीबी', 'यीबी'],
+    // Slavic languages
+    ru: UNITS_SLAVIC,
+    uk: UNITS_SLAVIC_E,
+    be: UNITS_SLAVIC,
+    bg: UNITS_SLAVIC_E,
+    sr: UNITS_DEFAULT,
+    mk: UNITS_MACEDONIAN,
+    pl: UNITS_DEFAULT,
+    cs: UNITS_DEFAULT,
+    sk: UNITS_DEFAULT,
+    sl: UNITS_DEFAULT,
+
+    // Germanic languages
+    de: UNITS_DEFAULT,
+    en: UNITS_DEFAULT,
+    nl: UNITS_DEFAULT,
+    sv: UNITS_DEFAULT,
+    da: UNITS_DEFAULT,
+    nb: UNITS_DEFAULT,
+    nn: UNITS_DEFAULT,
+    fi: UNITS_DEFAULT,
+
+    // Romance languages
+    fr: UNITS_FRENCH,
+    es: UNITS_DEFAULT,
+    it: UNITS_DEFAULT,
+    pt: UNITS_DEFAULT,
+    ro: UNITS_DEFAULT,
+    ca: UNITS_DEFAULT,
+
+    // Asian languages
+    zh: UNITS_CHINESE,
+    ja: UNITS_DEFAULT,
+    ko: UNITS_DEFAULT,
+    th: UNITS_DEFAULT,
+    vi: UNITS_DEFAULT,
+    id: UNITS_DEFAULT,
+    ms: UNITS_DEFAULT,
+
+    // Middle Eastern languages
+    ar: UNITS_ARABIC,
+    he: UNITS_DEFAULT,
+    tr: UNITS_DEFAULT,
+    fa: UNITS_DEFAULT,
+
+    // Indian languages
+    hi: UNITS_HINDI,
+    bn: UNITS_BENGALI,
+    ta: UNITS_TAMIL,
+    te: UNITS_DEFAULT,
+    mr: UNITS_MARATHI,
+    gu: UNITS_DEFAULT,
+
+    // Other languages
+    el: UNITS_DEFAULT,
+    hu: UNITS_DEFAULT,
+    lt: UNITS_DEFAULT,
+    lv: UNITS_DEFAULT,
+    et: UNITS_DEFAULT,
+    hr: UNITS_DEFAULT,
   };
+
+  if (bytes === 0) {
+    const locale = forcedLocale || navigator.language;
+    return new Intl.NumberFormat(locale).format(0) + ' ' +
+      ((unitTranslations[forcedLocale || locale.split('-')[0]] || UNITS_DEFAULT)[0]);
+  }
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   const value = bytes / Math.pow(k, i);
 
-  const formattedValue = new Intl.NumberFormat(navigator.language, {
+  const locale = forcedLocale || navigator.language;
+
+  const formattedValue = new Intl.NumberFormat(locale, {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(value);
 
-  const langCode = navigator.language.split('-')[0];
-  const localizedUnits = unitTranslations[langCode] || units;
+  const langCode = forcedLocale || locale.split('-')[0];
+  const localizedUnits = unitTranslations[langCode] || UNITS_DEFAULT;
 
   return `${formattedValue} ${localizedUnits[i]}`;
 }
@@ -226,9 +295,25 @@ export function mask(string: string, startVisible: number = 4, endVisible: numbe
   if (string.length <= startVisible + endVisible) {
     return maskChar.repeat(string.length);
   }
+
   return (
     string.slice(0, startVisible) +
     maskChar.repeat(string.length - startVisible - endVisible) +
     string.slice(-endVisible)
   );
+}
+
+/**
+ * Returns correct plural form for a number using 3 pluralization rules
+ * @param number - quantity
+ * @param forms - [singular, few, many]
+ * @param showNumber - prepend number if true
+ */
+export function pluralize(number: number, forms: [string, string, string], showNumber: boolean = true): string {
+  const n = Math.abs(number) % 100;
+  const n1 = n % 10;
+  const prefix = showNumber ? `${number} ` : '';
+  const idx = (n > 10 && n < 20) || n1 === 0 || n1 >= 5 ? 2 : n1 === 1 ? 0 : 1;
+
+  return `${prefix}${forms[idx]}`;
 }
