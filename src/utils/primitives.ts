@@ -151,11 +151,7 @@ export function reverse(string: string): string {
  * @param forcedLocale - Force specific locale (e.g., 'ru', 'en', 'fr'). If not provided, uses browser's locale
  * @returns Formatted string with appropriate unit
  */
-export function formatBytes(
-  bytes: number,
-  decimals: number = 2,
-  forcedLocale?: string
-): string {
+export function formatBytes(bytes: number, decimals: number = 2, forcedLocale?: string): string {
   const k = 1024;
 
   // Base unit arrays
@@ -236,8 +232,11 @@ export function formatBytes(
 
   if (bytes === 0) {
     const locale = forcedLocale || navigator.language;
-    return new Intl.NumberFormat(locale).format(0) + ' ' +
-      ((unitTranslations[forcedLocale || locale.split('-')[0]] || UNITS_DEFAULT)[0]);
+    return (
+      new Intl.NumberFormat(locale).format(0) +
+      ' ' +
+      (unitTranslations[forcedLocale || locale.split('-')[0]] || UNITS_DEFAULT)[0]
+    );
   }
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));

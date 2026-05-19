@@ -67,9 +67,7 @@ export function hasClass(element: HTMLElement | null, className: string): boolea
 export function addClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string'
-    ? className.split(' ').filter(cls => cls !== '')
-    : className;
+  const classes = typeof className === 'string' ? className.split(' ').filter((cls) => cls !== '') : className;
 
   if (classes.length === 0) return;
 
@@ -84,9 +82,7 @@ export function addClass(el: HTMLElement, className: string | string[]) {
 export function removeClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string'
-    ? className.split(' ').filter(cls => cls !== '')
-    : className;
+  const classes = typeof className === 'string' ? className.split(' ').filter((cls) => cls !== '') : className;
 
   if (classes.length === 0) return;
 
@@ -101,9 +97,7 @@ export function removeClass(el: HTMLElement, className: string | string[]) {
 export function toggleClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string'
-    ? className.split(' ').filter(cls => cls !== '')
-    : className;
+  const classes = typeof className === 'string' ? className.split(' ').filter((cls) => cls !== '') : className;
 
   classes.forEach((cls) => {
     if (cls === '') return;
@@ -122,10 +116,7 @@ export function toggleClass(el: HTMLElement, className: string | string[]) {
  * @param callback - Optional callback function called with the created element
  * @returns The created element
  */
-export function make<T extends HTMLElement = HTMLElement>(
-  name: string,
-  callback?: (el: T) => void
-): T {
+export function make<T extends HTMLElement = HTMLElement>(name: string, callback?: (el: T) => void): T {
   const el = document.createElement(name) as T;
   if (callback) callback(el);
   return el;
@@ -264,10 +255,7 @@ export function toHtml(data: string | Node | Node[] | HTMLElement | HTMLElement[
  * @param child - Child node, array of nodes, or NodeList to append
  * @returns The parent element
  */
-export function append<T extends DomNode = DomNode>(
-  el: T,
-  child: DomChildNode
-): T {
+export function append<T extends DomNode = DomNode>(el: T, child: DomChildNode): T {
   if (child instanceof NodeList) child.forEach((item: Node) => append(el, item));
   else if (Array.isArray(child)) Array.from(child).forEach((item: Node) => append(el, item));
   else el.appendChild(child);
@@ -281,10 +269,7 @@ export function append<T extends DomNode = DomNode>(
  * @param child - Child node, array of nodes, or NodeList to prepend
  * @returns The parent element
  */
-export function prepend<T extends DomNode = DomNode>(
-  el: T,
-  child: DomChildNode
-): T {
+export function prepend<T extends DomNode = DomNode>(el: T, child: DomChildNode): T {
   if (child instanceof NodeList) {
     Array.from(child)
       .reverse()
@@ -301,7 +286,7 @@ export function prepend<T extends DomNode = DomNode>(
 /**
  * Inserts nodes before an element, or retrieves the previous sibling element
  * if no nodes are provided.
- * 
+ *
  * @param el - Reference element
  * @param child - Node or nodes to insert (optional)
  * @returns The reference element when inserting, or the previous sibling element when reading
@@ -326,7 +311,7 @@ export function before<T extends Element>(el: T, child?: DomChildNode): T | Elem
 /**
  * Inserts nodes after an element, or retrieves the next sibling element
  * if no nodes are provided.
- * 
+ *
  * @param el - Reference element
  * @param child - Node or nodes to insert (optional)
  * @returns The reference element when inserting, or the next sibling element when reading
