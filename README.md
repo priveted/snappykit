@@ -135,8 +135,7 @@ Wraps native `addEventListener`/`removeEventListener` with automatic handler tra
 
 **Types:**
 ```typescript
-type BaseEvent = Event;
-type EventHandler<T extends BaseEvent = BaseEvent> = (event: T & { delegateTarget: HTMLElement }) => void;
+export type EventHandler<T extends Event = Event> = (evt: T) => void;
 ```
 
 ---
