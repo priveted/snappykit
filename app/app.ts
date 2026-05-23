@@ -31,7 +31,17 @@ import {
   getChildNodes,
   getText,
   getLength,
+  rect,
+  width,
+  height,
+  innerWidth,
+  innerHeight,
+  outerWidth,
+  outerHeight,
   offset,
+  position,
+  scrollTop,
+  scrollLeft,
   outerSize,
   empty,
   show,
@@ -62,7 +72,7 @@ import {
   escapeHtml,
   decodeHtml,
   parseHtml,
-} from 'snappykit';
+} from '@/utils';
 
 // ============================================================
 // SVG Icons
@@ -339,6 +349,8 @@ function createDemoPanel(): void {
         <button id="demo-attr-set-btn">Set Attribute</button>
         <button id="demo-attr-get-btn">Get Attribute</button>
         <button id="demo-attr-remove-btn">Remove Attribute</button>
+        <button id="demo-data-set-btn">Set Data</button>
+        <button id="demo-data-set-null-btn">Set Nullable Data (= remove)</button>
         <button id="demo-data-btn">Data by Prefix</button>
       </div>
       <div id="demo-attr-element" class="snp-demo__box" data-demo-id="123" data-demo-role="admin" data-pref-name="test" data-pref-value="42">Element with Attributes</div>
@@ -416,20 +428,42 @@ function createDemoPanel(): void {
     );
   });
 
-  // 8. offset / outerSize / getText / getLength
+  // 8. offset / outerSize / getText / getLength / rect / width / height / innerWidth / innerHeight / outerWidth / outerHeight / position / scrollTop / scrollLeft
   const measureDemo = make('div', (el) => {
     addClass(el, 'snp-demo__group');
     html(
       el,
       `
-      <h3>${ICONS.box} offset / outerSize / getText / getLength</h3>
+      <h3>${ICONS.box} Dimensions & Positioning</h3>
       <div class="snp-demo__row">
         <button id="demo-offset-btn">offset()</button>
         <button id="demo-outersize-btn">outerSize()</button>
         <button id="demo-gettext-btn">getText()</button>
         <button id="demo-getlength-btn">getLength()</button>
       </div>
-      <div id="demo-measure-box" class="snp-demo__box" style="width:200px;height:100px;margin:10px;padding:15px;">Measure me!</div>
+      <div class="snp-demo__row" style="margin-top:4px;">
+        <button id="demo-rect-btn">rect()</button>
+        <button id="demo-width-btn">width()</button>
+        <button id="demo-height-btn">height()</button>
+        <button id="demo-innerwidth-btn">innerWidth()</button>
+        <button id="demo-innerheight-btn">innerHeight()</button>
+        <button id="demo-outerwidth-btn">outerWidth()</button>
+        <button id="demo-outerheight-btn">outerHeight()</button>
+        <button id="demo-position-btn">position()</button>
+        <button id="demo-scrolltop-btn">scrollTop()</button>
+        <button id="demo-scrollleft-btn">scrollLeft()</button>
+      </div>
+      <div class="snp-demo__row" style="margin-top:4px;">
+        <button id="demo-set-width-btn">Set width(250px)</button>
+        <button id="demo-set-height-btn">Set height(150px)</button>
+        <button id="demo-set-innerwidth-btn">Set innerWidth(180px)</button>
+        <button id="demo-set-innerheight-btn">Set innerHeight(80px)</button>
+        <button id="demo-set-scrolltop-btn">Set scrollTop(50)</button>
+        <button id="demo-set-scrollleft-btn">Set scrollLeft(30)</button>
+      </div>
+      <div id="demo-measure-box" class="snp-demo__box" style="width:200px;height:100px;margin:10px;padding:15px;border:3px solid #6366f1;overflow:auto;position:relative;">
+        <div style="height:300px;width:400px;">Measure me!<br>Scroll inside to test scrollTop/scrollLeft</div>
+      </div>
       <div class="snp-demo__output" id="demo-measure-output"></div>
       <div class="snp-demo__code" id="demo-measure-code"></div>
     `,
@@ -886,6 +920,30 @@ function initDemoHandlers(): void {
     );
   });
 
+  on(document.getElementById('demo-data-set-btn')!, 'click', () => {
+    data(attrElement, 'def', 'OK')
+    html(attrOutput as HTMLElement, `${ICONS.trash} data(el, 'def', 'OK') - the data is set (data-def="OK")`);
+    html(
+      attrCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { data } from 'snappykit';\n\ndata(element, 'def', 'OK');\n`,
+        `import { data } from 'snappykit';\n\ndata(element, 'def', 'OK');\n`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-data-set-null-btn')!, 'click', () => {
+    data(attrElement, 'def', null)
+    html(attrOutput as HTMLElement, `${ICONS.trash} data(el, 'def', null) - data deleted`);
+    html(
+      attrCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { data } from 'snappykit';\n\ndata(element, 'def', null);\n`,
+        `import { data } from 'snappykit';\n\ndata(element, 'def', null);\n`,
+      ),
+    );
+  });
+
   on(document.getElementById('demo-data-btn')!, 'click', () => {
     const prefixed = dataByPrefix(attrElement as HTMLElement, 'pref');
     html(
@@ -1127,12 +1185,13 @@ function initDemoHandlers(): void {
   });
 
   // ===========================================
-  // 8. Measure Demo
+  // 8. Dimensions & Positioning Demo
   // ===========================================
   const measureBox = document.getElementById('demo-measure-box')!;
   const measureOutput = document.getElementById('demo-measure-output')!;
   const measureCode = document.getElementById('demo-measure-code')!;
 
+  // Original handlers
   on(document.getElementById('demo-offset-btn')!, 'click', () => {
     const off = offset(measureBox as HTMLElement);
     html(
@@ -1183,6 +1242,220 @@ function initDemoHandlers(): void {
       createDemoCodeBlock(
         `import { getLength } from 'snappykit';\n\nconst len: number = getLength(element);\n// Returns total text length from node or array of nodes\nconsole.log(len); // ${len}`,
         `import { getLength } from 'snappykit';\n\nconst len = getLength(element);\n// Returns total text length from node or array of nodes\nconsole.log(len); // ${len}`,
+      ),
+    );
+  });
+
+  // NEW handlers for rect, width, height, innerWidth, innerHeight, outerWidth, outerHeight, position, scrollTop, scrollLeft
+  on(document.getElementById('demo-rect-btn')!, 'click', () => {
+    const r = rect(measureBox as HTMLElement);
+    html(
+      measureOutput as HTMLElement,
+      `rect(el): { top: <strong>${r.top.toFixed(1)}</strong>, left: <strong>${r.left.toFixed(1)}</strong>, width: <strong>${r.width.toFixed(1)}</strong>, height: <strong>${r.height.toFixed(1)}</strong> }`,
+    );
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { rect } from 'snappykit';\n\nconst bounds: DOMRect = rect(element);\n// Returns getBoundingClientRect() result`,
+        `import { rect } from 'snappykit';\n\nconst bounds = rect(element);\n// Returns getBoundingClientRect() result`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-width-btn')!, 'click', () => {
+    const w = width(measureBox as HTMLElement);
+    html(measureOutput as HTMLElement, `width(el): <strong>${w}px</strong> (content only, excludes padding/border)`);
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { width } from 'snappykit';\n\nconst w: number = width(element);\n// Returns content width (excludes padding/border)`,
+        `import { width } from 'snappykit';\n\nconst w = width(element);\n// Returns content width (excludes padding/border)`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-height-btn')!, 'click', () => {
+    const h = height(measureBox as HTMLElement);
+    html(measureOutput as HTMLElement, `height(el): <strong>${h}px</strong> (content only, excludes padding/border)`);
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { height } from 'snappykit';\n\nconst h: number = height(element);\n// Returns content height (excludes padding/border)`,
+        `import { height } from 'snappykit';\n\nconst h = height(element);\n// Returns content height (excludes padding/border)`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-innerwidth-btn')!, 'click', () => {
+    const iw = innerWidth(measureBox as HTMLElement);
+    html(measureOutput as HTMLElement, `innerWidth(el): <strong>${iw}px</strong> (content + padding, excludes border)`);
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { innerWidth } from 'snappykit';\n\nconst iw: number = innerWidth(element);\n// Returns clientWidth (content + padding)`,
+        `import { innerWidth } from 'snappykit';\n\nconst iw = innerWidth(element);\n// Returns clientWidth (content + padding)`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-innerheight-btn')!, 'click', () => {
+    const ih = innerHeight(measureBox as HTMLElement);
+    html(measureOutput as HTMLElement, `innerHeight(el): <strong>${ih}px</strong> (content + padding, excludes border)`);
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { innerHeight } from 'snappykit';\n\nconst ih: number = innerHeight(element);\n// Returns clientHeight (content + padding)`,
+        `import { innerHeight } from 'snappykit';\n\nconst ih = innerHeight(element);\n// Returns clientHeight (content + padding)`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-outerwidth-btn')!, 'click', () => {
+    const ow = outerWidth(measureBox as HTMLElement, false);
+    const owm = outerWidth(measureBox as HTMLElement, true);
+    html(
+      measureOutput as HTMLElement,
+      `outerWidth(el): <strong>${ow}px</strong><br>outerWidth(el, true): <strong>${owm}px</strong> (including margin)`,
+    );
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { outerWidth } from 'snappykit';\n\nconst ow: number = outerWidth(element);\n// offsetWidth: ${ow}\nconst owm: number = outerWidth(element, true);\n// offsetWidth + margin: ${owm}`,
+        `import { outerWidth } from 'snappykit';\n\nconst ow = outerWidth(element);\n// offsetWidth: ${ow}\nconst owm = outerWidth(element, true);\n// offsetWidth + margin: ${owm}`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-outerheight-btn')!, 'click', () => {
+    const oh = outerHeight(measureBox as HTMLElement, false);
+    const ohm = outerHeight(measureBox as HTMLElement, true);
+    html(
+      measureOutput as HTMLElement,
+      `outerHeight(el): <strong>${oh}px</strong><br>outerHeight(el, true): <strong>${ohm}px</strong> (including margin)`,
+    );
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { outerHeight } from 'snappykit';\n\nconst oh: number = outerHeight(element);\n// offsetHeight: ${oh}\nconst ohm: number = outerHeight(element, true);\n// offsetHeight + margin: ${ohm}`,
+        `import { outerHeight } from 'snappykit';\n\nconst oh = outerHeight(element);\n// offsetHeight: ${oh}\nconst ohm = outerHeight(element, true);\n// offsetHeight + margin: ${ohm}`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-position-btn')!, 'click', () => {
+    const pos = position(measureBox as HTMLElement);
+    html(
+      measureOutput as HTMLElement,
+      `position(el): { top: <strong>${pos.top}px</strong>, left: <strong>${pos.left}px</strong> } - relative to offset parent`,
+    );
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { position } from 'snappykit';\n\nconst pos: { top: number; left: number } = position(element);\n// Returns offsetTop and offsetLeft`,
+        `import { position } from 'snappykit';\n\nconst pos = position(element);\n// Returns offsetTop and offsetLeft`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-scrolltop-btn')!, 'click', () => {
+    const st = scrollTop(measureBox as HTMLElement);
+    html(
+      measureOutput as HTMLElement,
+      `scrollTop(el): <strong>${st}px</strong> (scroll inside the box to change)`,
+    );
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { scrollTop } from 'snappykit';\n\nconst scrollPos: number = scrollTop(element);\nconsole.log(scrollPos); // ${st}`,
+        `import { scrollTop } from 'snappykit';\n\nconst scrollPos = scrollTop(element);\nconsole.log(scrollPos); // ${st}`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-scrollleft-btn')!, 'click', () => {
+    const sl = scrollLeft(measureBox as HTMLElement);
+    html(
+      measureOutput as HTMLElement,
+      `scrollLeft(el): <strong>${sl}px</strong> (scroll horizontally to change)`,
+    );
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { scrollLeft } from 'snappykit';\n\nconst scrollPos: number = scrollLeft(element);\nconsole.log(scrollPos); // ${sl}`,
+        `import { scrollLeft } from 'snappykit';\n\nconst scrollPos = scrollLeft(element);\nconsole.log(scrollPos); // ${sl}`,
+      ),
+    );
+  });
+
+  // Setter handlers
+  on(document.getElementById('demo-set-width-btn')!, 'click', () => {
+    width(measureBox as HTMLElement, 250);
+    html(measureOutput as HTMLElement, `width(el, 250): set! New width: <strong>${width(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { width } from 'snappykit';\n\nwidth(element, 250);\n// Sets CSS width, returns element for chaining`,
+        `import { width } from 'snappykit';\n\nwidth(element, 250);\n// Sets CSS width, returns element for chaining`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-set-height-btn')!, 'click', () => {
+    height(measureBox as HTMLElement, 150);
+    html(measureOutput as HTMLElement, `height(el, 150): set! New height: <strong>${height(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { height } from 'snappykit';\n\nheight(element, 150);\n// Sets CSS height, returns element for chaining`,
+        `import { height } from 'snappykit';\n\nheight(element, 150);\n// Sets CSS height, returns element for chaining`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-set-innerwidth-btn')!, 'click', () => {
+    innerWidth(measureBox as HTMLElement, 180);
+    html(measureOutput as HTMLElement, `innerWidth(el, 180): set! New innerWidth: <strong>${innerWidth(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { innerWidth } from 'snappykit';\n\ninnerWidth(element, 180);\n// Adjusts CSS width so clientWidth equals 180`,
+        `import { innerWidth } from 'snappykit';\n\ninnerWidth(element, 180);\n// Adjusts CSS width so clientWidth equals 180`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-set-innerheight-btn')!, 'click', () => {
+    innerHeight(measureBox as HTMLElement, 80);
+    html(measureOutput as HTMLElement, `innerHeight(el, 80): set! New innerHeight: <strong>${innerHeight(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { innerHeight } from 'snappykit';\n\ninnerHeight(element, 80);\n// Adjusts CSS height so clientHeight equals 80`,
+        `import { innerHeight } from 'snappykit';\n\ninnerHeight(element, 80);\n// Adjusts CSS height so clientHeight equals 80`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-set-scrolltop-btn')!, 'click', () => {
+    scrollTop(measureBox as HTMLElement, 50);
+    html(measureOutput as HTMLElement, `scrollTop(el, 50): set! New scrollTop: <strong>${scrollTop(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { scrollTop } from 'snappykit';\n\nscrollTop(element, 50);\n// Sets scrollTop, returns element for chaining`,
+        `import { scrollTop } from 'snappykit';\n\nscrollTop(element, 50);\n// Sets scrollTop, returns element for chaining`,
+      ),
+    );
+  });
+
+  on(document.getElementById('demo-set-scrollleft-btn')!, 'click', () => {
+    scrollLeft(measureBox as HTMLElement, 30);
+    html(measureOutput as HTMLElement, `scrollLeft(el, 30): set! New scrollLeft: <strong>${scrollLeft(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureCode as HTMLElement,
+      createDemoCodeBlock(
+        `import { scrollLeft } from 'snappykit';\n\nscrollLeft(element, 30);\n// Sets scrollLeft, returns element for chaining`,
+        `import { scrollLeft } from 'snappykit';\n\nscrollLeft(element, 30);\n// Sets scrollLeft, returns element for chaining`,
       ),
     );
   });
@@ -1993,7 +2266,6 @@ test.section('DOM: Append, Prepend, Before, After');
     `before(child1, beforeEl);\n// Inserts beforeEl right before child1`,
   );
 
-  // New test: before() as getter (without second argument)
   test.assertEquals(
     before(child1 as HTMLElement),
     beforeEl,
@@ -2020,7 +2292,6 @@ test.section('DOM: Append, Prepend, Before, After');
     `after(child1, afterEl);\n// Inserts afterEl right after child1`,
   );
 
-  // New test: after() as getter (without second argument)
   test.assertEquals(
     after(child1 as HTMLElement),
     afterEl,
@@ -2407,6 +2678,179 @@ test.section('DOM: Offset & OuterSize');
     'outerSize() includes margin',
     `const dims: { width: number; height: number } = outerSize(el);\n// Width and height including margin`,
     `const dims = outerSize(el);\n// Width and height including margin`,
+  );
+
+  remove(el);
+}
+
+// ============================================================
+// DOM: Dimensions & Positioning
+// ============================================================
+test.section('DOM: Dimensions & Positioning');
+
+{
+  const el = make('div');
+  css(el, {
+    width: '200px',
+    height: '100px',
+    padding: '15px',
+    border: '3px solid #6366f1',
+    margin: '10px',
+  });
+  append(document.body, el);
+
+  const scrollableEl = make('div', (el) => {
+    css(el, {
+      width: 150,
+      height: 150,
+      background: 'green',
+      overflow: 'scroll',
+      padding: '4px'
+    });
+
+    const scrollableContent = make('div', (content) => {
+      css(content, {
+        width: 350,
+        height: 350,
+        background: 'blue'
+      });
+    })
+
+    append(el, scrollableContent)
+  });
+
+  append(document.body, scrollableEl)
+
+  // rect()
+  const r = rect(el);
+  test.assert(
+    typeof r.width === 'number' && typeof r.height === 'number',
+    'rect() returns DOMRect with width and height',
+    `const r: DOMRect = rect(el);\n// getBoundingClientRect()`,
+    `const r = rect(el);\n// getBoundingClientRect()`,
+  );
+
+  // width()
+  test.assertEquals(
+    width(el),
+    165.2,
+    'width() returns content width (165.2px)',
+    `width(el); // 165.2`,
+    `width(el); // 165.2`,
+  );
+
+  // height()
+  test.assertEquals(
+    height(el),
+    65.2,
+    'height() returns content height (65.2px)',
+    `height(el); // 65.2`,
+    `height(el); // 65.2`,
+  );
+
+  // innerWidth()
+  test.assertEquals(
+    innerWidth(el),
+    195.2,
+    'innerWidth() returns content + padding (200 + 15*2 = 195.2)',
+    `innerWidth(el); // 195.2`,
+    `innerWidth(el); // 195.2`,
+  );
+
+  // innerHeight()
+  test.assertEquals(
+    innerHeight(el),
+    95.2,
+    'innerHeight() returns content + padding (100 + 15*2 = 95.2)',
+    `innerHeight(el); // 95.2`,
+    `innerHeight(el); // 95.2`,
+  );
+
+  // outerWidth()
+  test.assertEquals(
+    outerWidth(el, false),
+    200,
+    'outerWidth() without margin',
+    `outerWidth(el, false); // 200`,
+    `outerWidth(el, false); // 200`,
+  );
+  test.assertEquals(
+    outerWidth(el, true),
+    220,
+    'outerWidth() with margin (236 + 20 = 256)',
+    `outerWidth(el, true); // 256`,
+    `outerWidth(el, true); // 256`,
+  );
+
+  // outerHeight()
+  test.assertEquals(
+    outerHeight(el, false),
+    100,
+    'outerHeight() without margin (100 + 30 + 6 = 136)',
+    `outerHeight(el, false); // 136`,
+    `outerHeight(el, false); // 136`,
+  );
+  test.assertEquals(
+    outerHeight(el, true),
+    120,
+    'outerHeight() with margin (136 + 20 = 156)',
+    `outerHeight(el, true); // 156`,
+    `outerHeight(el, true); // 156`,
+  );
+
+  // position()
+  const pos = position(el);
+  test.assert(
+    typeof pos.top === 'number' && typeof pos.left === 'number',
+    'position() returns { top, left }',
+    `const pos = position(el);\n// { top: offsetTop, left: offsetLeft }`,
+    `const pos = position(el);\n// { top: offsetTop, left: offsetLeft }`,
+  );
+
+  // scrollTop()
+  test.assertEquals(
+    scrollTop(scrollableEl),
+    0,
+    'scrollTop() returns 0 initially',
+    `scrollTop(scrollableEl); // 0`,
+    `scrollTop(scrollableEl); // 0`,
+  );
+  scrollTop(scrollableEl, 50);
+  test.assertEquals(
+    parseInt(
+      scrollTop(scrollableEl).toString()
+    ),
+    50,
+    'scrollTop() sets scroll position',
+    `scrollTop(scrollableEl, 50);\nscrollTop(scrollableEl); // 50 or 50,4...`,
+    `scrollTop(scrollableEl, 50);\nscrollTop(scrollableEl); // 50 or 50,4...`,
+  );
+
+  // scrollLeft()
+  test.assertEquals(
+    scrollLeft(scrollableEl),
+    0,
+    'scrollLeft() returns 0 initially',
+    `scrollLeft(scrollableEl); // 0`,
+    `scrollLeft(scrollableEl); // 0`,
+  );
+  scrollLeft(scrollableEl, 30);
+  test.assertEquals(
+    parseInt(
+      scrollLeft(scrollableEl).toString()
+    ),
+    30,
+    'scrollLeft() sets scroll position',
+    `scrollLeft(scrollableEl, 30);\nscrollLeft(scrollableEl); // 30`,
+    `scrollLeft(scrollableEl, 30);\nscrollLeft(scrollableEl); // 30`,
+  );
+
+  // Setter chain test
+  test.assert(
+    width(el, 250) === el,
+    'width() setter returns element for chaining',
+    `width(el, 250) === el; // true`,
+    `width(el, 250) === el; // true`,
   );
 
   remove(el);
