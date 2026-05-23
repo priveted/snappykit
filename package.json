@@ -1,10 +1,10 @@
 {
   "name": "snappykit",
   "description": "A lightweight, zero-dependency TypeScript utility kit for DOM manipulation, event handling, string formatting, HTML parsing, and state management.",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "license": "MIT",
   "author": "Eduard Y",
-  "homepage": "https://priveted.com",
+  "homepage": "https://snappykit.priveted.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/priveted/snappykit"
