@@ -1,11 +1,5 @@
 import { toCamelCase, toKebabCase } from './primitives';
-import type {
-  DomChildNode,
-  DomNode,
-  ValueElement,
-  VisibleElement,
-  ScrollableElement
-} from '@/types';
+import type { DomChildNode, DomNode, ValueElement, VisibleElement, ScrollableElement } from '@/types';
 
 /**
  * Gets or sets CSS styles on an element
@@ -352,7 +346,7 @@ export function attr<T extends HTMLElement = HTMLElement>(el: T, key: string, va
 export function attr<T extends HTMLElement = HTMLElement>(
   el: T,
   key: string | Record<string, string | null>,
-  value?: string | null
+  value?: string | null,
 ): string | undefined | T {
   if (typeof key === 'object' && key !== null) {
     Object.entries(key).forEach(([attrKey, attrValue]) => {
@@ -503,7 +497,7 @@ export function data<T extends HTMLElement = HTMLElement>(el: T, key: string, va
 export function data<T extends HTMLElement = HTMLElement>(
   el: T,
   key: string | Record<string, string | null>,
-  value?: string | null
+  value?: string | null,
 ): string | undefined | T {
   if (typeof key === 'object' && key !== null) {
     Object.entries(key).forEach(([dataKey, dataValue]) => {
@@ -621,10 +615,7 @@ export function rect(el: HTMLElement): DOMRect {
  */
 export function width<T extends HTMLElement = HTMLElement>(el: T): number;
 export function width<T extends HTMLElement = HTMLElement>(el: T, value: number | string): T;
-export function width<T extends HTMLElement = HTMLElement>(
-  el: T,
-  value?: number | string
-): number | T {
+export function width<T extends HTMLElement = HTMLElement>(el: T, value?: number | string): number | T {
   if (value !== undefined) {
     css(el, 'width', value);
     return el;
@@ -632,10 +623,7 @@ export function width<T extends HTMLElement = HTMLElement>(
 
   const styles = cssComputed(el);
 
-  const result =
-    rect(el).width -
-    getPaddingX(styles) -
-    getBorderX(styles);
+  const result = rect(el).width - getPaddingX(styles) - getBorderX(styles);
 
   return normalizeLayoutValue(result);
 }
@@ -648,10 +636,7 @@ export function width<T extends HTMLElement = HTMLElement>(
  */
 export function height<T extends HTMLElement = HTMLElement>(el: T): number;
 export function height<T extends HTMLElement = HTMLElement>(el: T, value: number | string): T;
-export function height<T extends HTMLElement = HTMLElement>(
-  el: T,
-  value?: number | string
-): number | T {
+export function height<T extends HTMLElement = HTMLElement>(el: T, value?: number | string): number | T {
   if (value !== undefined) {
     css(el, 'height', value);
     return el;
@@ -659,10 +644,7 @@ export function height<T extends HTMLElement = HTMLElement>(
 
   const styles = cssComputed(el);
 
-  const result =
-    rect(el).height -
-    getPaddingY(styles) -
-    getBorderY(styles);
+  const result = rect(el).height - getPaddingY(styles) - getBorderY(styles);
 
   return normalizeLayoutValue(result);
 }
@@ -675,17 +657,11 @@ export function height<T extends HTMLElement = HTMLElement>(
  */
 export function innerWidth<T extends HTMLElement = HTMLElement>(el: T): number;
 export function innerWidth<T extends HTMLElement = HTMLElement>(el: T, value: number | string): T;
-export function innerWidth<T extends HTMLElement = HTMLElement>(
-  el: T,
-  value?: number | string
-): number | T {
+export function innerWidth<T extends HTMLElement = HTMLElement>(el: T, value?: number | string): number | T {
   if (value !== undefined) {
     const styles = cssComputed(el);
 
-    const numericValue =
-      typeof value === 'string'
-        ? parseFloat(value)
-        : value;
+    const numericValue = typeof value === 'string' ? parseFloat(value) : value;
 
     let cssWidth = numericValue;
 
@@ -702,9 +678,7 @@ export function innerWidth<T extends HTMLElement = HTMLElement>(
 
   const styles = cssComputed(el);
 
-  const result =
-    rect(el).width -
-    getBorderX(styles);
+  const result = rect(el).width - getBorderX(styles);
 
   return normalizeLayoutValue(result);
 }
@@ -717,17 +691,11 @@ export function innerWidth<T extends HTMLElement = HTMLElement>(
  */
 export function innerHeight<T extends HTMLElement = HTMLElement>(el: T): number;
 export function innerHeight<T extends HTMLElement = HTMLElement>(el: T, value: number | string): T;
-export function innerHeight<T extends HTMLElement = HTMLElement>(
-  el: T,
-  value?: number | string
-): number | T {
+export function innerHeight<T extends HTMLElement = HTMLElement>(el: T, value?: number | string): number | T {
   if (value !== undefined) {
     const styles = cssComputed(el);
 
-    const numericValue =
-      typeof value === 'string'
-        ? parseFloat(value)
-        : value;
+    const numericValue = typeof value === 'string' ? parseFloat(value) : value;
 
     let cssHeight = numericValue;
 
@@ -744,9 +712,7 @@ export function innerHeight<T extends HTMLElement = HTMLElement>(
 
   const styles = cssComputed(el);
 
-  const result =
-    rect(el).height -
-    getBorderY(styles);
+  const result = rect(el).height - getBorderY(styles);
 
   return normalizeLayoutValue(result);
 }
@@ -757,10 +723,7 @@ export function innerHeight<T extends HTMLElement = HTMLElement>(
  * @param includeMargin - Include margins in result
  * @returns Outer width in pixels
  */
-export function outerWidth<T extends HTMLElement = HTMLElement>(
-  el: T,
-  includeMargin: boolean = false
-): number {
+export function outerWidth<T extends HTMLElement = HTMLElement>(el: T, includeMargin: boolean = false): number {
   const styles = cssComputed(el);
 
   let result = rect(el).width;
@@ -778,10 +741,7 @@ export function outerWidth<T extends HTMLElement = HTMLElement>(
  * @param includeMargin - Include margins in result
  * @returns Outer height in pixels
  */
-export function outerHeight<T extends HTMLElement = HTMLElement>(
-  el: T,
-  includeMargin: boolean = false
-): number {
+export function outerHeight<T extends HTMLElement = HTMLElement>(el: T, includeMargin: boolean = false): number {
   const styles = cssComputed(el);
 
   let result = rect(el).height;

@@ -921,7 +921,7 @@ function initDemoHandlers(): void {
   });
 
   on(document.getElementById('demo-data-set-btn')!, 'click', () => {
-    data(attrElement, 'def', 'OK')
+    data(attrElement, 'def', 'OK');
     html(attrOutput as HTMLElement, `${ICONS.trash} data(el, 'def', 'OK') - the data is set (data-def="OK")`);
     html(
       attrCode as HTMLElement,
@@ -933,7 +933,7 @@ function initDemoHandlers(): void {
   });
 
   on(document.getElementById('demo-data-set-null-btn')!, 'click', () => {
-    data(attrElement, 'def', null)
+    data(attrElement, 'def', null);
     html(attrOutput as HTMLElement, `${ICONS.trash} data(el, 'def', null) - data deleted`);
     html(
       attrCode as HTMLElement,
@@ -1300,7 +1300,10 @@ function initDemoHandlers(): void {
 
   on(document.getElementById('demo-innerheight-btn')!, 'click', () => {
     const ih = innerHeight(measureBox as HTMLElement);
-    html(measureOutput as HTMLElement, `innerHeight(el): <strong>${ih}px</strong> (content + padding, excludes border)`);
+    html(
+      measureOutput as HTMLElement,
+      `innerHeight(el): <strong>${ih}px</strong> (content + padding, excludes border)`,
+    );
     html(
       measureCode as HTMLElement,
       createDemoCodeBlock(
@@ -1359,10 +1362,7 @@ function initDemoHandlers(): void {
 
   on(document.getElementById('demo-scrolltop-btn')!, 'click', () => {
     const st = scrollTop(measureBox as HTMLElement);
-    html(
-      measureOutput as HTMLElement,
-      `scrollTop(el): <strong>${st}px</strong> (scroll inside the box to change)`,
-    );
+    html(measureOutput as HTMLElement, `scrollTop(el): <strong>${st}px</strong> (scroll inside the box to change)`);
     html(
       measureCode as HTMLElement,
       createDemoCodeBlock(
@@ -1374,10 +1374,7 @@ function initDemoHandlers(): void {
 
   on(document.getElementById('demo-scrollleft-btn')!, 'click', () => {
     const sl = scrollLeft(measureBox as HTMLElement);
-    html(
-      measureOutput as HTMLElement,
-      `scrollLeft(el): <strong>${sl}px</strong> (scroll horizontally to change)`,
-    );
+    html(measureOutput as HTMLElement, `scrollLeft(el): <strong>${sl}px</strong> (scroll horizontally to change)`);
     html(
       measureCode as HTMLElement,
       createDemoCodeBlock(
@@ -1390,7 +1387,10 @@ function initDemoHandlers(): void {
   // Setter handlers
   on(document.getElementById('demo-set-width-btn')!, 'click', () => {
     width(measureBox as HTMLElement, 250);
-    html(measureOutput as HTMLElement, `width(el, 250): set! New width: <strong>${width(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureOutput as HTMLElement,
+      `width(el, 250): set! New width: <strong>${width(measureBox as HTMLElement)}px</strong>`,
+    );
     html(
       measureCode as HTMLElement,
       createDemoCodeBlock(
@@ -1402,7 +1402,10 @@ function initDemoHandlers(): void {
 
   on(document.getElementById('demo-set-height-btn')!, 'click', () => {
     height(measureBox as HTMLElement, 150);
-    html(measureOutput as HTMLElement, `height(el, 150): set! New height: <strong>${height(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureOutput as HTMLElement,
+      `height(el, 150): set! New height: <strong>${height(measureBox as HTMLElement)}px</strong>`,
+    );
     html(
       measureCode as HTMLElement,
       createDemoCodeBlock(
@@ -1414,7 +1417,10 @@ function initDemoHandlers(): void {
 
   on(document.getElementById('demo-set-innerwidth-btn')!, 'click', () => {
     innerWidth(measureBox as HTMLElement, 180);
-    html(measureOutput as HTMLElement, `innerWidth(el, 180): set! New innerWidth: <strong>${innerWidth(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureOutput as HTMLElement,
+      `innerWidth(el, 180): set! New innerWidth: <strong>${innerWidth(measureBox as HTMLElement)}px</strong>`,
+    );
     html(
       measureCode as HTMLElement,
       createDemoCodeBlock(
@@ -1426,7 +1432,10 @@ function initDemoHandlers(): void {
 
   on(document.getElementById('demo-set-innerheight-btn')!, 'click', () => {
     innerHeight(measureBox as HTMLElement, 80);
-    html(measureOutput as HTMLElement, `innerHeight(el, 80): set! New innerHeight: <strong>${innerHeight(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureOutput as HTMLElement,
+      `innerHeight(el, 80): set! New innerHeight: <strong>${innerHeight(measureBox as HTMLElement)}px</strong>`,
+    );
     html(
       measureCode as HTMLElement,
       createDemoCodeBlock(
@@ -1438,7 +1447,10 @@ function initDemoHandlers(): void {
 
   on(document.getElementById('demo-set-scrolltop-btn')!, 'click', () => {
     scrollTop(measureBox as HTMLElement, 50);
-    html(measureOutput as HTMLElement, `scrollTop(el, 50): set! New scrollTop: <strong>${scrollTop(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureOutput as HTMLElement,
+      `scrollTop(el, 50): set! New scrollTop: <strong>${scrollTop(measureBox as HTMLElement)}px</strong>`,
+    );
     html(
       measureCode as HTMLElement,
       createDemoCodeBlock(
@@ -1450,7 +1462,10 @@ function initDemoHandlers(): void {
 
   on(document.getElementById('demo-set-scrollleft-btn')!, 'click', () => {
     scrollLeft(measureBox as HTMLElement, 30);
-    html(measureOutput as HTMLElement, `scrollLeft(el, 30): set! New scrollLeft: <strong>${scrollLeft(measureBox as HTMLElement)}px</strong>`);
+    html(
+      measureOutput as HTMLElement,
+      `scrollLeft(el, 30): set! New scrollLeft: <strong>${scrollLeft(measureBox as HTMLElement)}px</strong>`,
+    );
     html(
       measureCode as HTMLElement,
       createDemoCodeBlock(
@@ -2705,21 +2720,21 @@ test.section('DOM: Dimensions & Positioning');
       height: 150,
       background: 'green',
       overflow: 'scroll',
-      padding: '4px'
+      padding: '4px',
     });
 
     const scrollableContent = make('div', (content) => {
       css(content, {
         width: 350,
         height: 350,
-        background: 'blue'
+        background: 'blue',
       });
-    })
+    });
 
-    append(el, scrollableContent)
+    append(el, scrollableContent);
   });
 
-  append(document.body, scrollableEl)
+  append(document.body, scrollableEl);
 
   // rect()
   const r = rect(el);
@@ -2817,9 +2832,7 @@ test.section('DOM: Dimensions & Positioning');
   );
   scrollTop(scrollableEl, 50);
   test.assertEquals(
-    parseInt(
-      scrollTop(scrollableEl).toString()
-    ),
+    parseInt(scrollTop(scrollableEl).toString()),
     50,
     'scrollTop() sets scroll position',
     `scrollTop(scrollableEl, 50);\nscrollTop(scrollableEl); // 50 or 50,4...`,
@@ -2836,9 +2849,7 @@ test.section('DOM: Dimensions & Positioning');
   );
   scrollLeft(scrollableEl, 30);
   test.assertEquals(
-    parseInt(
-      scrollLeft(scrollableEl).toString()
-    ),
+    parseInt(scrollLeft(scrollableEl).toString()),
     30,
     'scrollLeft() sets scroll position',
     `scrollLeft(scrollableEl, 30);\nscrollLeft(scrollableEl); // 30`,
