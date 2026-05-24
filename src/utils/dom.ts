@@ -878,11 +878,23 @@ export function show(el: VisibleElement): void {
   if (el.__visibleStatus) {
     css(el, 'display', el.__visibleStatus);
     delete el.__visibleStatus;
-  } else {
-    css(el, 'display', '');
-
-    if (attr(el, 'style') === '') removeAttr(el, 'style');
+    return;
   }
+
+  const styleDisplay = el.style.display;
+
+  if (styleDisplay && styleDisplay !== 'none') {
+    css(el, 'display', styleDisplay);
+    return;
+  }
+
+  const computedDisplay = css(el, 'display');
+  if (computedDisplay && computedDisplay !== 'none') {
+    css(el, 'display', computedDisplay);
+    return;
+  }
+
+  css(el, 'display', 'block');
 }
 
 /**
@@ -890,19 +902,21 @@ export function show(el: VisibleElement): void {
  * @param el - Target element
  */
 export function hide(el: VisibleElement): void {
-  if (css(el, 'display') === 'none') return;
-
-  const currentDisplay = el.style.display || css(el, 'display');
-
+  const currentDisplay = css(el, 'display');
   if (currentDisplay === 'none') return;
 
-  if (el.style.display) {
-    el.__visibleStatus = el.style.display;
+  const styleDisplay = el.style.display;
+
+  if (styleDisplay && styleDisplay !== 'none') {
+    el.__visibleStatus = styleDisplay;
+  } else if (currentDisplay && currentDisplay !== 'none') {
+    el.__visibleStatus = currentDisplay;
+  } else {
+    el.__visibleStatus = '';
   }
 
   css(el, 'display', 'none');
 }
-
 /**
  * Toggles element visibility, restoring previous display value when showing
  * @param el - Target element
