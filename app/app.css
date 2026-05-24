@@ -347,7 +347,8 @@ body {
   border-color: var(--accent);
 }
 
-.snp-demo__group button {
+.snp-demo__group button,
+.demo-btn {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -378,7 +379,22 @@ body {
   transform: translateY(0);
 }
 
+.snp-test-wrap {
+  width: 100px;
+  height: 100px;
+  /* display: flex; */
+  display: none;
+  background-color: #4ade80;
+}
+
+@media (max-width: 1024px) {
+  .snp-test-wrap {
+    display: flex;
+  }
+}
+
 .snp-demo__box {
+  display: flex;
   padding: 16px;
   background: var(--bg);
   border: 1px solid var(--border);
@@ -500,6 +516,7 @@ body {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -510,6 +527,7 @@ body {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }

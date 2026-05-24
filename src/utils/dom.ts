@@ -1,5 +1,11 @@
+import { visibilityStore } from '@/store/visibilityStore';
 import { toCamelCase, toKebabCase } from './primitives';
-import type { DomChildNode, DomNode, ValueElement, VisibleElement, ScrollableElement } from '@/types';
+import type {
+  DomChildNode,
+  DomNode,
+  ValueElement,
+  ScrollableElement
+} from '@/types';
 
 /**
  * Gets or sets CSS styles on an element
@@ -874,12 +880,20 @@ export function empty<T extends HTMLElement = HTMLElement>(el: T): T {
  * Shows a hidden element by restoring its previous display value
  * @param el - Target element
  */
-export function show(el: VisibleElement): void {
-  if (el.__visibleStatus) {
-    css(el, 'display', el.__visibleStatus);
-    delete el.__visibleStatus;
+export function show(el: HTMLElement): void {
+  const storedDisplay = visibilityStore.get(el);
+
+
+  if (storedDisplay !== undefined) {
+    css(el, 'display', storedDisplay);
+    visibilityStore.delete(el);
     return;
   }
+
+  const currentDisplay = css(el, 'display');
+
+  if(currentDisplay !== 'none')
+    return;
 
   const styleDisplay = el.style.display;
 
@@ -901,27 +915,28 @@ export function show(el: VisibleElement): void {
  * Hides an element and stores its current display value for later restoration
  * @param el - Target element
  */
-export function hide(el: VisibleElement): void {
+export function hide(el: HTMLElement): void {
   const currentDisplay = css(el, 'display');
   if (currentDisplay === 'none') return;
 
   const styleDisplay = el.style.display;
 
   if (styleDisplay && styleDisplay !== 'none') {
-    el.__visibleStatus = styleDisplay;
+    visibilityStore.set(el, styleDisplay);
   } else if (currentDisplay && currentDisplay !== 'none') {
-    el.__visibleStatus = currentDisplay;
+    visibilityStore.set(el, currentDisplay);
   } else {
-    el.__visibleStatus = '';
+    visibilityStore.set(el, '');
   }
 
   css(el, 'display', 'none');
 }
+
 /**
  * Toggles element visibility, restoring previous display value when showing
  * @param el - Target element
  */
-export function toggle(el: VisibleElement): void {
+export function toggle(el: HTMLElement): void {
   const isHidden = css(el, 'display') === 'none';
 
   if (isHidden) show(el);
