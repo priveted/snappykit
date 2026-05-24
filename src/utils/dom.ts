@@ -1,11 +1,6 @@
 import { visibilityStore } from '@/store/visibilityStore';
 import { toCamelCase, toKebabCase } from './primitives';
-import type {
-  DomChildNode,
-  DomNode,
-  ValueElement,
-  ScrollableElement
-} from '@/types';
+import type { DomChildNode, DomNode, ValueElement, ScrollableElement } from '@/types';
 
 /**
  * Gets or sets CSS styles on an element
@@ -883,7 +878,6 @@ export function empty<T extends HTMLElement = HTMLElement>(el: T): T {
 export function show(el: HTMLElement): void {
   const storedDisplay = visibilityStore.get(el);
 
-
   if (storedDisplay !== undefined) {
     css(el, 'display', storedDisplay);
     visibilityStore.delete(el);
@@ -892,8 +886,7 @@ export function show(el: HTMLElement): void {
 
   const currentDisplay = css(el, 'display');
 
-  if(currentDisplay !== 'none')
-    return;
+  if (currentDisplay !== 'none') return;
 
   const styleDisplay = el.style.display;
 
