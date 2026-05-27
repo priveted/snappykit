@@ -61,6 +61,28 @@ export function hasClass(element: HTMLElement | null, className: string): boolea
 }
 
 /**
+ * Normalizes class names from various input formats into a clean array of individual classes
+ * @param className - CSS class name(s) as string or array of strings (may contain multiple spaces)
+ * @returns Array of individual, non-empty class names
+ */
+function normalizeClasses(className: string | string[]): string[] {
+  if (typeof className === 'string') {
+    // Split by spaces, filter out empty strings, and trim each class
+    return className
+      .split(' ')
+      .map((cls) => cls.trim())
+      .filter((cls) => cls !== '');
+  }
+
+  // For arrays: join all elements, then split by spaces to handle multiple words in array items
+  return className
+    .join(' ')
+    .split(' ')
+    .map((cls) => cls.trim())
+    .filter((cls) => cls !== '');
+}
+
+/**
  * Adds one or more CSS classes to an element
  * @param el - Target DOM element
  * @param className - CSS class name(s) as string or array of strings
@@ -68,7 +90,7 @@ export function hasClass(element: HTMLElement | null, className: string): boolea
 export function addClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string' ? className.split(' ').filter((cls) => cls !== '') : className;
+  const classes = normalizeClasses(className);
 
   if (classes.length === 0) return;
 
@@ -83,7 +105,7 @@ export function addClass(el: HTMLElement, className: string | string[]) {
 export function removeClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string' ? className.split(' ').filter((cls) => cls !== '') : className;
+  const classes = normalizeClasses(className);
 
   if (classes.length === 0) return;
 
@@ -98,7 +120,7 @@ export function removeClass(el: HTMLElement, className: string | string[]) {
 export function toggleClass(el: HTMLElement, className: string | string[]) {
   if (!el) return;
 
-  const classes = typeof className === 'string' ? className.split(' ').filter((cls) => cls !== '') : className;
+  const classes = normalizeClasses(className);
 
   classes.forEach((cls) => {
     if (cls === '') return;

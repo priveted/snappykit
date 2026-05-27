@@ -5,15 +5,15 @@
 
 ## Website
 
-[Website](https://snappykit.priveted.com)
-[Guide](https://snappykit.priveted.com/guide/)
-[API](https://snappykit.priveted.com/api/)
+[Website](https://snappykit.priveted.com) /
+[Guide](https://snappykit.priveted.com/guide/) /
+[API](https://snappykit.priveted.com/api/) /
 
 #### Русская версия
 
-[Сайт](https://snappykit.priveted.com/ru/)
-[Руководство](https://snappykit.priveted.com/ru/guide/)
-[API](https://snappykit.priveted.com/ru/api/)
+[Сайт](https://snappykit.priveted.com/ru/) /
+[Руководство](https://snappykit.priveted.com/ru/guide/) /
+[API](https://snappykit.priveted.com/ru/api/) /
 
 **Snappy.Kit** is a lightweight, zero-dependency TypeScript utility library for working with the DOM, primitives (strings and numbers), events, HTML, and more. Designed for component-based development without the overhead of a framework.
 
