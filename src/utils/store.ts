@@ -1,7 +1,7 @@
 /**
  * Creates a simple key-value store from an object
  * @param storeObject - Initial object to use as the store
- * @returns Store object with get, set, has, and delete methods
+ * @returns Store object with get, set, has, delete, getAll, and clear methods
  */
 export function createStore<T extends object>(storeObject: T) {
   const store = { ...storeObject };
@@ -41,6 +41,25 @@ export function createStore<T extends object>(storeObject: T) {
      */
     delete(key: keyof T): boolean {
       return delete store[key];
+    },
+
+    /**
+     * Retrieves all data from the store as a new object
+     * @returns A shallow copy of the entire store
+     */
+    getAll(): T {
+      return { ...store };
+    },
+
+    /**
+     * Clears all data from the store
+     */
+    clear(): void {
+      for (const key in store) {
+        if (Object.prototype.hasOwnProperty.call(store, key)) {
+          delete store[key];
+        }
+      }
     },
   };
 }

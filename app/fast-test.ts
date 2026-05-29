@@ -1,5 +1,5 @@
 import './app.css';
-import { addClass, removeClass, toggleClass } from '@/utils';
+import { addClass, createStore, removeClass, toggleClass } from '@/utils';
 
 addClass(document.body, ['hello', ' world ', 'x c']);
 addClass(document.body, ' one ');
@@ -12,3 +12,16 @@ setTimeout(() => {
   removeClass(document.body, [' one-arr ']);
   removeClass(document.body, 'one-normal');
 }, 5000);
+
+
+const store = createStore({
+  hello: "world",
+  age: 31
+})
+
+
+console.log(store.getAll())
+
+store.clear();
+
+console.log(store.getAll())
